@@ -1,7 +1,10 @@
 /**
  * @author: Gustavo Mendez
  * @author: Luis Urbina
+ * @version 1.0
+ * @since 01/04/2019
  *
+ * Reference:
  * Bailey, D. A. (2002).
  * Java structures: Data structures in Java for the principled programmer.
  * McGraw-Hill.

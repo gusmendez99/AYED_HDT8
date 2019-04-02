@@ -28,7 +28,7 @@ import java.util.PriorityQueue;
  * @author Gustavo Méndez
  * @author Luis Urbina
  * @version 1.0
- * @since  21/03/2019
+ * @since  01/04/2019
  */
 public class HospitalView {
 
@@ -228,8 +228,14 @@ public class HospitalView {
     }
 
     private String getPatientPriorityQueue() {
-        //TODO: Urbina's work
-        return "";
+        String patientsStr = "";
+        Patient tempPatient = null;
+
+        while(!patientPriorityQueue.isEmpty()){
+            tempPatient = patientPriorityQueue.poll();
+            patientsStr += tempPatient.toString() + "\n";
+        }
+        return patientsStr;
     }
 
     private String getPatientVectorHeap() {
