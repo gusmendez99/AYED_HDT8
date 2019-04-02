@@ -2,6 +2,7 @@ import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextArea;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
@@ -13,10 +14,14 @@ import javafx.stage.Stage;
 
 import java.io.*;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+//This is the important import, bro
+import java.util.PriorityQueue;
 /**
  * Class that manages the operations between the user interface and the logic of the program
  * manages the JavaFx stages and operates in the BinarySearchTree instance to feed the user
@@ -33,17 +38,24 @@ public class HospitalView {
     private TextArea inputTextArea;
     private TextArea outputTextArea;
     private FileChooser fileChooser;
+    private ComboBox<String> heapTypesComboBox;
 
     /**
      * Control variables
      */
-    private boolean isPatientListLoaded = false;
+    private boolean isPatientListLoaded, isVectorHeapSelected = false;
+    private static final String VECTOR_HEAP = "VectorHeap";
+    private static final String PRIORITY_QUEUE = "PriorityQueue";
+    private VectorHeap<Patient> patientVectorHeap;
+    private PriorityQueue<Patient> patientPriorityQueue;
+
 
     /**
      * Show the stage
      * @param stage the stage to show in the current context
      */
     public void show(Stage stage) {
+        //Init UI components
         inputTextArea = new TextArea("");
         outputTextArea = new TextArea("...");
         fileChooser = new FileChooser();
@@ -54,6 +66,20 @@ public class HospitalView {
 
         String currentPath = Paths.get(".").toAbsolutePath().normalize().toString();
         fileChooser.setInitialDirectory(new File(currentPath));
+
+        //Init list of heaps
+        heapTypesComboBox = new ComboBox<>();
+        heapTypesComboBox.getItems().add(VECTOR_HEAP);
+        heapTypesComboBox.getItems().add(PRIORITY_QUEUE);
+
+        //Initialized as true, cause this is the default
+        isVectorHeapSelected = true;
+        heapTypesComboBox.getSelectionModel().selectFirst();
+
+        //Init heaps
+        patientVectorHeap = new VectorHeap<>();
+        patientPriorityQueue = new PriorityQueue<>();
+
 
         BorderPane border = new BorderPane();
         HBox hbox = addHBox(stage);
@@ -90,6 +116,7 @@ public class HospitalView {
                     String text;
                     while ((text = bufferedReader.readLine()) != null) {
                         inputTextArea.appendText("\n" + text);
+
                     }
 
                 } catch (FileNotFoundException ex) {
@@ -117,38 +144,52 @@ public class HospitalView {
             }
         });
 
-
+        heapTypesComboBox.valueProperty().addListener((obs, oldItem, newItem) -> {
+            if (newItem != null) {
+                switch(newItem){
+                    case VECTOR_HEAP:
+                        isVectorHeapSelected = true;
+                        break;
+                    case PRIORITY_QUEUE:
+                        isVectorHeapSelected = false;
+                        break;
+                }
+            }
+        });
 
         //This is the debug button
-        Button buttonRun = new Button("Order");
-        buttonRun.setPrefSize(100, 20);
-        buttonRun.setStyle("-fx-background-color: #388e3c;");
-        buttonRun.setOnAction(e -> {
+        Button buttonOrder = new Button("Order");
+        buttonOrder.setPrefSize(100, 20);
+        buttonOrder.setStyle("-fx-background-color: #388e3c;");
+        buttonOrder.setOnAction(e -> {
 
             if(isPatientListLoaded){
                 //Split the inputTextArea by lines and store in an Array
+                patientVectorHeap.clear();
+                patientPriorityQueue.clear();
                 List<String> initLines = Arrays.asList(inputTextArea.getText().split("\n"));
 
+                //Saving input data as new patients
                 for (String line : initLines) {
-                    //TODO: Translate each line in this ArrayList, append to outputTextArea TextArea
-                    String[] textToTranslate = line.split(" ");
-                    for(String word: textToTranslate)
-                    {
-                        //TODO: Order PatientList
-                        /*//for each                                                                                                   word get the association that matches the key
-                        Association<String, String> a = myBinarySearchTree.get(new Association<>(word, null));
-                        if(a != null)
-                        {
-                            //append the association value if exists to the outputTextArea variable
-                            outputTextArea.appendText(a.getValue().toString());
-                        }
-                        else
-                        {
-                            outputTextArea.appendText(" "+ "*" + word + "*" + " ");
-                        }*/
+                    //Adding patients to a new ArrayList
+                    if(!line.isEmpty()){
+                        String linePatientArray[] = line.split(",");
+                        patientVectorHeap.add(new Patient(linePatientArray[0], linePatientArray[1], linePatientArray[2]));
+                        patientPriorityQueue.add(new Patient(linePatientArray[0], linePatientArray[1], linePatientArray[2]));
                     }
-                    outputTextArea.appendText("\n");
 
+                }
+
+                //Clearing last output
+                outputTextArea.clear();
+                outputTextArea.appendText("Output" + "\n");
+
+                if(isVectorHeapSelected){
+                    //VectorHeap Logic
+                    outputTextArea.appendText(getPatientVectorHeap());
+                } else {
+                    //PriorityQueue Logic
+                    outputTextArea.appendText(getPatientPriorityQueue());
                 }
 
             } else {
@@ -181,9 +222,25 @@ public class HospitalView {
             isPatientListLoaded = false;
         });
 
-        hbox.getChildren().addAll(buttonLoadPatientText, buttonClear, buttonRun);
+        hbox.getChildren().addAll(buttonLoadPatientText, heapTypesComboBox, buttonClear, buttonOrder);
 
         return hbox;
+    }
+
+    private String getPatientPriorityQueue() {
+        //TODO: Urbina's work
+        return "";
+    }
+
+    private String getPatientVectorHeap() {
+        String patientsStr = "";
+        Patient tempPatient = null;
+
+        while(!patientVectorHeap.isEmpty()){
+            tempPatient = patientVectorHeap.remove();
+            patientsStr += tempPatient.toString() + "\n";
+        }
+        return patientsStr;
     }
 
 
@@ -207,6 +264,8 @@ public class HospitalView {
 
         return vbox;
     }
+
+
 
 
 

@@ -6,7 +6,7 @@
  * Java structures: Data structures in Java for the principled programmer.
  * McGraw-Hill.
  */
-public class Patient  implements Comparable<Patient>{
+public class Patient implements Comparable<Patient>{
     private String name;
     private String description;
     private String code;
