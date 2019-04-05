@@ -57,7 +57,7 @@ public class HospitalView {
     public void show(Stage stage) {
         //Init UI components
         inputTextArea = new TextArea("");
-        outputTextArea = new TextArea("...");
+        outputTextArea = new TextArea("");
         fileChooser = new FileChooser();
 
         fileChooser.getExtensionFilters().addAll(
@@ -76,9 +76,7 @@ public class HospitalView {
         isVectorHeapSelected = true;
         heapTypesComboBox.getSelectionModel().selectFirst();
 
-        //Init heaps
-        patientVectorHeap = new VectorHeap<>();
-        patientPriorityQueue = new PriorityQueue<>();
+
 
 
         BorderPane border = new BorderPane();
@@ -109,6 +107,7 @@ public class HospitalView {
         buttonLoadPatientText.setPrefSize(200, 20);
         buttonLoadPatientText.setOnAction(e -> {
             File selectedFile = fileChooser.showOpenDialog(stage);
+            inputTextArea.clear();
             if (selectedFile != null) {
                 BufferedReader bufferedReader = null;
                 try {
@@ -163,6 +162,10 @@ public class HospitalView {
         buttonOrder.setStyle("-fx-background-color: #388e3c;");
         buttonOrder.setOnAction(e -> {
 
+            //Init heaps
+            patientVectorHeap = new VectorHeap<>();
+            patientPriorityQueue = new PriorityQueue<>();
+
             if(isPatientListLoaded){
                 //Split the inputTextArea by lines and store in an Array
                 patientVectorHeap.clear();
@@ -180,15 +183,16 @@ public class HospitalView {
 
                 }
 
-                //Clearing last output
+                //Clearing last output .
                 outputTextArea.clear();
-                outputTextArea.appendText("Output" + "\n");
 
                 if(isVectorHeapSelected){
                     //VectorHeap Logic
+                    outputTextArea.appendText("VectorHeap: " + "\n");
                     outputTextArea.appendText(getPatientVectorHeap());
                 } else {
                     //PriorityQueue Logic
+                    outputTextArea.appendText("PriorityQueue: " + "\n");
                     outputTextArea.appendText(getPatientPriorityQueue());
                 }
 
@@ -197,7 +201,7 @@ public class HospitalView {
                 Alert alert = new Alert(Alert.AlertType.WARNING);
                 alert.setTitle("Error");
                 alert.setHeaderText("Load files");
-                alert.setContentText("Text to translate or Dictionary haven't been loaded...");
+                alert.setContentText("Text to order haven't been loaded...");
                 alert.showAndWait();
 
             }
