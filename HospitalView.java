@@ -24,7 +24,6 @@ import java.util.logging.Logger;
 import java.util.PriorityQueue;
 /**
  * Class that manages the operations between the user interface and the logic of the program
- * manages the JavaFx stages and operates in the BinarySearchTree instance to feed the user
  * @author Gustavo Méndez
  * @author Luis Urbina
  * @version 1.0
@@ -134,10 +133,10 @@ public class HospitalView {
                 isPatientListLoaded = true;
 
                 //Dictionary and/or text haven't been loaded
-                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
                 alert.setTitle("Text file loaded!");
                 alert.setHeaderText("Text file loaded successfully");
-                alert.setContentText("Try to translate your text...");
+                alert.setContentText("Try to order your text now...");
                 alert.showAndWait();
 
             }
@@ -231,6 +230,10 @@ public class HospitalView {
         return hbox;
     }
 
+    /**
+     * Method that generates the PriorityQueue order result as String
+     * @return a patient list as String
+     */
     private String getPatientPriorityQueue() {
         String patientsStr = "";
         Patient tempPatient = null;
@@ -242,6 +245,10 @@ public class HospitalView {
         return patientsStr;
     }
 
+    /**
+     * Method that generates the VectorHeap order result as String
+     * @return a patient list as String
+     */
     private String getPatientVectorHeap() {
         String patientsStr = "";
         Patient tempPatient = null;
